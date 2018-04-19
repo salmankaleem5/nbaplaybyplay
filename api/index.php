@@ -6,13 +6,13 @@ if( isset($_POST['action']) && $_POST['action'] == "getGames" ){
 	if( isset($_POST['gameDate']) ){
 		// error check for $_POST vars
 
-		//$schedule = json_decode( file_get_contents("schedule.json"), true );	
-		$schedule = NBAClient::getGames($_POST['gameDate']);
-		
+		$schedule = json_decode( file_get_contents("schedule.json"), true );
+		// $schedule = NBAClient::getGames($_POST['gameDate']);
+
 		if( empty($schedule) || empty( $schedule['sports_content']['games']['game'] ) ){
 			echo json_encode( array() );
 		} else {
-			echo json_encode( parse_schedule($schedule) );	
+			echo json_encode( parse_schedule($schedule) );
 		}
 
 		die();
@@ -22,9 +22,9 @@ if( isset($_POST['action']) && $_POST['action'] == "getGames" ){
 		// error check for $_POST vars
 
 		// curl request to get play by play for the provided game
-		//$playsList = json_decode( file_get_contents("plays.json"), true );
-		$playsList = NBAClient::getPlays($_POST['gameDate'], $_POST['gameID']);
-		
+		$playsList = json_decode( file_get_contents("plays.json"), true );
+		// $playsList = NBAClient::getPlays($_POST['gameDate'], $_POST['gameID']);
+
 		echo json_encode( get_stats( $playsList, $_POST['startTime'], $_POST['endTime'] ) );
 		die();
 	}
@@ -39,7 +39,7 @@ if( isset($_POST['action']) && $_POST['action'] == "getGames" ){
  */
 function parse_schedule( array $schedule ): array{
 	$teamInformation = json_decode( file_get_contents("teams.json"), true );
-	
+
 	$games = $schedule['sports_content']['games']['game'];
 
 	$scheduledGames = [];
@@ -101,7 +101,7 @@ function get_stats( array $playsList, string $startTime, string $endTime ): arra
 
 		$i++;
 	}
-	
+
 	// Find ending point
 	while( $i < count($playsList) ){
 		$play = $playsList[$i];
@@ -122,7 +122,7 @@ function get_stats( array $playsList, string $startTime, string $endTime ): arra
 		$play = $playsList[$i];
 		$playTimestamp = empty($play['clock']) ? "12:00" : $play['clock'];
 		$playTimestamp = strtotime( $playTimestamp );
-		
+
 		// Found play that corresponds to provided end time
 		if( $playTimestamp <= $range['end']['time'] ){
 			break;
@@ -132,8 +132,8 @@ function get_stats( array $playsList, string $startTime, string $endTime ): arra
 		collect_stats($play, $stats);
 
 		$i++;
-	}	
-	
+	}
+
 	return $stats;
 }
 

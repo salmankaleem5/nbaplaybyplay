@@ -19,24 +19,29 @@ module.exports = function(grunt) {
       '* Copyright (c) <%= grunt.template.today("yyyy") %> <%= pkg.author.name %>;' +
       ' Licensed <%= _.pluck(pkg.licenses, "type").join(", ") %> */\n',
     // Task configuration.
-    concat: {
-      options: {
-        banner: '<%= banner %>',
-        stripBanners: true
-      },
-      dist: {
-        src: ['<%= vars.jsFolder %>/main.js'],
-        dest: '<%= vars.jsDistFolder %>/main.js'
-      }
-    },
+    // concat: {
+    //   options: {
+    //     banner: '<%= banner %>',
+    //     stripBanners: true
+    //   },
+    //   dist: {
+    //     src: ['<%= vars.jsFolder %>/main.js'],
+    //     dest: '<%= vars.jsDistFolder %>/main.js'
+    //   }
+    // },
     uglify: {
-      options: {
-        banner: '<%= banner %>'
-      },
-      dist: {
-        src: '<%= concat.dist.dest %>',
-        dest: '<%= vars.jsDistFolder %>/script.js'
+      js: {
+        files: {
+          '<%= vars.jsDistFolder %>/script.js': ['<%= vars.jsFolder %>/*.js']
+        }
       }
+      // options: {
+      //   banner: '<%= banner %>'
+      // },
+      // dist: {
+      //   src: '<%= concat.dist.dest %>',
+      //   dest: '<%= vars.jsDistFolder %>/script.js'
+      // }
     },
     jshint: {
       options: {
@@ -68,7 +73,8 @@ module.exports = function(grunt) {
         files: [
           '<%= vars.jsFolder %>/*.js',
         ],
-        tasks: ['jshint', 'concat', 'uglify']
+        // tasks: ['jshint', 'concat', 'uglify'],
+        tasks: ['jshint', 'uglify']
       }
       // gruntfile: {
       //   files: '<%= jshint.gruntfile.src %>',
@@ -93,7 +99,7 @@ module.exports = function(grunt) {
 
   grunt.registerTask('build', 'Building site', function(){
     grunt.task.run('jshint');
-    grunt.task.run('concat');
+    // grunt.task.run('concat');
     grunt.task.run('uglify');
   });
 

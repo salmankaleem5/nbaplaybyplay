@@ -132,7 +132,7 @@
 
 		// AJAX request to get games on date provided
 		$.ajax({
-			url: "http://localhost/nbaplay/api/index.php",
+			url: "http://nbaplaybyplay.test/api/index.php",
 			type: "POST",
 			data: {
 				"action": "getGames",
