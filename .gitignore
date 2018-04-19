@@ -1,0 +1,8 @@
+#Ignore Sublime Files
+*.sublime-workspace
+*.sublime-project
+*.sublime-projectcompletions
+
+#Ignore Node Files
+node_modules
+npm-debug.log

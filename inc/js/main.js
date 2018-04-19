@@ -7,7 +7,6 @@
 		.val( yesterdayString )
 		.attr('max', yesterdayString );
 
-
 	/**
 	 * Module to interact with the games list
 	 */
@@ -45,7 +44,7 @@
 				});
 				selector.removeClass('hidden');
 
-				gamesListData = games;		
+				gamesListData = games;
 			},
 			/**
 			 * [notifyUser description]
@@ -117,7 +116,7 @@
 		// Confirm date is between 10/17/2017 and today's date
 		var gameDate = $("#game-date-input").val();
 		var gameDateUTC = new Date(gameDate).getTime();
-		
+
 		if( !(/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/.test(gameDate)) ){
 			alert("Please enter a valid date, between 10/17/2017 and yesterday's date");
 			return false;
@@ -125,7 +124,7 @@
 
 		// Yesterday's date is the maximum date a user can select
 		if( gameDateUTC < startOfSeasonUTC || gameDateUTC > yesterdayDateUTC ){
-			alert("Please enter a valid date, between 10/17/2017 and yesterday's date");	
+			alert("Please enter a valid date, between 10/17/2017 and yesterday's date");
 			return false;
 		}
 
@@ -208,7 +207,7 @@
 
 					var homeTeamRow = makeTableRows( response[selectedGame.homeTeam.abbreviation], selectedGame.homeTeam.teamName );
 					var awayTeamRow = makeTableRows( response[selectedGame.awayTeam.abbreviation], selectedGame.awayTeam.teamName );
-					
+
 					$("#table-stats").append(homeTeamRow).append(awayTeamRow).removeClass('hidden');
 				}
 			},
@@ -227,7 +226,7 @@
 	 */
 	function makeTableRows( teamStats, teamName ){
 		var statsCategories = ['PTS', 'FGM', 'FGA', '2PM', '2PA', '3PM', '3PA', 'FTM', 'FTA', 'REB', 'TOV', 'PF', 'SUB'];
-		
+
 		var row = $("<tr/>");
 		$("<td/>", {
 			text: teamName
