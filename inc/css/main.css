@@ -28,3 +28,7 @@
 .hidden {
 	display: none;
 }
+
+.container h1.display-3 {
+  display: none;
+}

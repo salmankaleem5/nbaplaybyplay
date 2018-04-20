@@ -29,12 +29,22 @@ module.exports = function(grunt) {
     //     dest: '<%= vars.jsDistFolder %>/main.js'
     //   }
     // },
+    babel: {
+      options: {
+        sourceMap: true,
+      },
+      dist: {
+        files: {
+          '<%= vars.jsFolder %>/main.js': '<%= vars.jsFolder %>/main.es6.js'
+        }
+      }
+    },
     uglify: {
       js: {
         files: {
-          '<%= vars.jsDistFolder %>/script.js': ['<%= vars.jsFolder %>/*.js']
+          '<%= vars.jsDistFolder %>/script.js': ['<%= vars.jsFolder %>/main.js']
         }
-      }
+      },
       // options: {
       //   banner: '<%= banner %>'
       // },
@@ -74,8 +84,8 @@ module.exports = function(grunt) {
           '<%= vars.jsFolder %>/*.js',
         ],
         // tasks: ['jshint', 'concat', 'uglify'],
-        tasks: ['jshint', 'uglify']
-      }
+        tasks: ['jshint', 'babel', 'uglify']
+      },
       // gruntfile: {
       //   files: '<%= jshint.gruntfile.src %>',
       //   tasks: ['jshint:gruntfile']
@@ -88,6 +98,7 @@ module.exports = function(grunt) {
   });
 
   // These plugins provide necessary tasks.
+  grunt.loadNpmTasks('grunt-babel');
   grunt.loadNpmTasks('grunt-contrib-concat');
   grunt.loadNpmTasks('grunt-contrib-uglify');
   grunt.loadNpmTasks('grunt-contrib-qunit');
@@ -95,11 +106,13 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-watch');
 
   // Default task.
-  // grunt.registerTask('default', ['jshint', 'qunit', 'concat', 'uglify']);
+  grunt.registerTask('default', ['jshint', 'qunit', 'concat', 'uglify']);
+
+  // grunt.registerTask('babel'. ['babel:dist']);
 
   grunt.registerTask('build', 'Building site', function(){
     grunt.task.run('jshint');
-    // grunt.task.run('concat');
+    grunt.task.run('babel');
     grunt.task.run('uglify');
   });
 
