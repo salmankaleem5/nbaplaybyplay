@@ -12,42 +12,24 @@ module.exports = function(grunt) {
       cssFolder: 'inc/css',
       cssDistFolder: 'inc/dist/css'
     },
-
-    banner: '/*! <%= pkg.title || pkg.name %> - v<%= pkg.version %> - ' +
-      '<%= grunt.template.today("yyyy-mm-dd") %>\n' +
-      '<%= pkg.homepage ? "* " + pkg.homepage + "\\n" : "" %>' +
-      '* Copyright (c) <%= grunt.template.today("yyyy") %> <%= pkg.author.name %>;' +
-      ' Licensed <%= _.pluck(pkg.licenses, "type").join(", ") %> */\n',
-    // Task configuration.
-    // concat: {
-    //   options: {
-    //     banner: '<%= banner %>',
-    //     stripBanners: true
-    //   },
-    //   dist: {
-    //     src: ['<%= vars.jsFolder %>/main.js'],
-    //     dest: '<%= vars.jsDistFolder %>/main.js'
-    //   }
-    // },
     babel: {
       options: {
         sourceMap: true,
       },
       dist: {
         files: {
-          '<%= vars.jsFolder %>/main.js': '<%= vars.jsFolder %>/main.es6.js'
+          '<%= vars.jsFolder %>/main.js': '<%= vars.jsFolder %>/main.es6.js',
+          '<%= vars.jsFolder %>/main-vue.js': '<%= vars.jsFolder %>/main-vue.es6.js'
         }
       }
     },
     uglify: {
       js: {
         files: {
-          '<%= vars.jsDistFolder %>/script.js': ['<%= vars.jsFolder %>/main.js']
+          '<%= vars.jsDistFolder %>/script.js': ['<%= vars.jsFolder %>/main.js'],
+          '<%= vars.jsDistFolder %>/script-vue.js': ['<%= vars.jsFolder %>/main-vue.js']
         }
       },
-      // options: {
-      //   banner: '<%= banner %>'
-      // },
       // dist: {
       //   src: '<%= concat.dist.dest %>',
       //   dest: '<%= vars.jsDistFolder %>/script.js'

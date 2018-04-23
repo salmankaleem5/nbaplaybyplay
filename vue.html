@@ -26,17 +26,18 @@
 		<form>
 			<div class="form-group">
 				<label for="game-date-input">Select a date</label>
-				<input id="game-date-input" min="2017-10-17" type="date" pattern="[0-9]{4}-[0-9]{2}-[0-9]{2}" required value="2017-10-17">
+				<input id="game-date-input" min="2017-10-17" type="date" pattern="[0-9]{4}-[0-9]{2}-[0-9]{2}" required v-model:value="currentDate">
 			</div>
-			<button id="get-games-button" type="button" class="btn btn-secondary">Get games</button>
+			<button id="get-games-button" type="button" class="btn btn-secondary" v-on:click.prevent="getGames">Get games</button>
 
 			<p><strong>List of Games</strong></p>
 			<div id="games-list" class="hidden"></div>
 
 			<p class="text-center">Minutes</p>
-			<div id="input-slider" class="clearfix"></div>
+			<div id="input-slider" ref="vueInputSlider" class="clearfix"></div>
 		</form>
-		<button id="get-data-button" type="button" class="btn btn-primary" disabled="true">Get data</button>
+		<!-- disabled="true" -->
+		<button id="get-data-button" type="button" class="btn btn-primary" v-on:click.prevent="getData">Get data</button>
 
 		<table id="table-stats" class="table table-bordered table-hover hidden">
 			<thead class="thead-light">
@@ -61,9 +62,10 @@
 		</table>
 	</div>
 	<!-- Scripts  -->
-	<script src="inc/lib/js/jquery-3.2.1.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+
 	<script src="inc/lib/js/nouislider.min.js"></script>
 
-	<script src="inc/dist/js/script.js"></script>
+	<script src="inc/dist/js/script-vue.js"></script>
 </body>
 </html>
