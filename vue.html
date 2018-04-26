@@ -31,7 +31,14 @@
 			<button id="get-games-button" type="button" class="btn btn-secondary" v-on:click.prevent="getGames">Get games</button>
 
 			<p><strong>List of Games</strong></p>
-			<div id="games-list" class="hidden"></div>
+			<div id="games-list" class="">
+				<div class="form-check" v-for="(game, index) in gamesList">
+					<label class="form-check-label">
+						<input type="radio" name="game" :value="game.gameID" v-bind:id="'game' + index" class="form-check-input" v-model="selectedGameID">
+						<span>{{ `${game.homeTeam.teamName} vs ${game.awayTeam.teamName}` }}</span>
+					</label>
+				</div>
+			</div>
 
 			<p class="text-center">Minutes</p>
 			<div id="input-slider" ref="vueInputSlider" class="clearfix"></div>
@@ -63,7 +70,7 @@
 	</div>
 	<!-- Scripts  -->
 	<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
-
+	<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 	<script src="inc/lib/js/nouislider.min.js"></script>
 
 	<script src="inc/dist/js/script-vue.js"></script>
