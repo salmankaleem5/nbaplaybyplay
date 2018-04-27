@@ -9,6 +9,38 @@ const apiModule = (function(){
   return module;
 }());
 
+// https://vuejs.org/v2/guide/components.html#Using-v-model-on-Components
+const gameItemTemplate = `
+  <div class="form-check">
+    <label class="form-check-label">
+      <input type="radio" name="game" :value="game.gameID" class="form-check-input" v-on:input="$emit('input', $event.target.value)">
+      <span>{{ game.homeTeam.teamName }} vs {{game.awayTeam.teamName }}</span>
+    </label>
+  </div>
+`;
+Vue.component('game-item', {
+  props: ['game'],
+  template: gameItemTemplate
+});
+
+const tableRowTemplate = `
+  <tr>
+    <td>{{ rowName }}</td>
+    <td v-for="cat in statsCategories">
+      {{ rowData[cat] }}
+    </td>
+  </tr>
+`;
+Vue.component('table-row', {
+  props: ['rowData', 'rowName'],
+  template: tableRowTemplate,
+  data: function(){
+    return {
+      statsCategories: ['PTS', 'FGM', 'FGA', '2PM', '2PA', '3PM', '3PA', 'FTM', 'FTA', 'REB', 'TOV', 'PF', 'SUB']
+    }
+  }
+});
+
 const vm = new Vue ({
   el: '#app',
   data: {
@@ -17,6 +49,10 @@ const vm = new Vue ({
     currentDate: undefined,
     gamesList: [],
     selectedGameID: undefined,
+    teamA: {},
+    teamAName: undefined,
+    teamB: {},
+    teamBName: undefined
   },
   methods: {
     getGames: function(event){
@@ -58,6 +94,12 @@ const vm = new Vue ({
         })
         .then((response) => {
           console.log( response );
+          var teamAbbrs = Object.keys(response.data);
+          this.teamA = Object.assign({}, this.teamA, response.data[teamAbbrs[0]]);
+          this.teamAName = teamAbbrs[0];
+
+          this.teamB = Object.assign({}, this.teamB, response.data[teamAbbrs[1]]);
+          this.teamBName = teamAbbrs[1];
         })
         .catch(function(error){
           console.log( error );
@@ -102,11 +144,12 @@ const vm = new Vue ({
     }
   });
 
-  /**
-   * Format date from input to match pattern accepted by the NBA's API
-   * @param  String
-   * @return String
-   */
-   function formatDate(dateString){
-    return dateString.replace(new RegExp('-', 'g'), "");
-  }
+
+/**
+ * Format date from input to match pattern accepted by the NBA's API
+ * @param  String
+ * @return String
+ */
+ function formatDate(dateString){
+  return dateString.replace(new RegExp('-', 'g'), "");
+}

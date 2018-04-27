@@ -32,21 +32,15 @@
 
 			<p><strong>List of Games</strong></p>
 			<div id="games-list" class="">
-				<div class="form-check" v-for="(game, index) in gamesList">
-					<label class="form-check-label">
-						<input type="radio" name="game" :value="game.gameID" v-bind:id="'game' + index" class="form-check-input" v-model="selectedGameID">
-						<span>{{ `${game.homeTeam.teamName} vs ${game.awayTeam.teamName}` }}</span>
-					</label>
-				</div>
+				<game-item v-for="(gameObject, index) in gamesList" :key="index" :game="gameObject" :value="selectedGameID" v-on:input="selectedGameID = $event"></game-item>
 			</div>
-
 			<p class="text-center">Minutes</p>
 			<div id="input-slider" ref="vueInputSlider" class="clearfix"></div>
 		</form>
-		<!-- disabled="true" -->
-		<button id="get-data-button" type="button" class="btn btn-primary" v-on:click.prevent="getData">Get data</button>
 
-		<table id="table-stats" class="table table-bordered table-hover hidden">
+		<button id="get-data-button" type="button" class="btn btn-primary" v-on:click.prevent="getData" :disabled="!selectedGameID">Get data</button>
+
+		<table id="table-stats" class="table table-bordered table-hover" v-if="teamAName !== undefined && teamBName !== undefined">
 			<thead class="thead-light">
 				<tr>
 					<th>Team</th>
@@ -65,7 +59,10 @@
 					<th scope="col"><abbr title="Substitutions">SUBS</abbr></th>
 				</tr>
 			</thead>
-			<tbody></tbody>
+			<tbody>
+				<tr is="table-row" :row-data="teamA" :row-name="teamAName"></tr>
+				<tr is="table-row" :row-data="teamB" :row-name="teamBName"></tr>
+			</tbody>
 		</table>
 	</div>
 	<!-- Scripts  -->

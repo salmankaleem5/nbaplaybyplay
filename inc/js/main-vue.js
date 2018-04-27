@@ -11,6 +11,24 @@ var apiModule = function () {
   return module;
 }();
 
+// https://vuejs.org/v2/guide/components.html#Using-v-model-on-Components
+var gameItemTemplate = '\n  <div class="form-check">\n    <label class="form-check-label">\n      <input type="radio" name="game" :value="game.gameID" class="form-check-input" v-on:input="$emit(\'input\', $event.target.value)">\n      <span>{{ game.homeTeam.teamName }} vs {{game.awayTeam.teamName }}</span>\n    </label>\n  </div>\n';
+Vue.component('game-item', {
+  props: ['game'],
+  template: gameItemTemplate
+});
+
+var tableRowTemplate = '\n  <tr>\n    <td>{{ rowName }}</td>\n    <td v-for="cat in statsCategories">\n      {{ rowData[cat] }}\n    </td>\n  </tr>\n';
+Vue.component('table-row', {
+  props: ['rowData', 'rowName'],
+  template: tableRowTemplate,
+  data: function data() {
+    return {
+      statsCategories: ['PTS', 'FGM', 'FGA', '2PM', '2PA', '3PM', '3PA', 'FTM', 'FTA', 'REB', 'TOV', 'PF', 'SUB']
+    };
+  }
+});
+
 var vm = new Vue({
   el: '#app',
   data: {
@@ -18,7 +36,11 @@ var vm = new Vue({
     minuteEnd: 48,
     currentDate: undefined,
     gamesList: [],
-    selectedGameID: undefined
+    selectedGameID: undefined,
+    teamA: {},
+    teamAName: undefined,
+    teamB: {},
+    teamBName: undefined
   },
   methods: {
     getGames: function getGames(event) {
@@ -44,6 +66,8 @@ var vm = new Vue({
       }
     },
     getData: function getData(event) {
+      var _this2 = this;
+
       if (this.selectedGameID !== undefined && this.currentDate !== undefined && this.minuteRange.length === 2) {
         var formData = new FormData();
         formData.set('action', "getStats");
@@ -59,6 +83,12 @@ var vm = new Vue({
           responseType: 'json'
         }).then(function (response) {
           console.log(response);
+          var teamAbbrs = Object.keys(response.data);
+          _this2.teamA = Object.assign({}, _this2.teamA, response.data[teamAbbrs[0]]);
+          _this2.teamAName = teamAbbrs[0];
+
+          _this2.teamB = Object.assign({}, _this2.teamB, response.data[teamAbbrs[1]]);
+          _this2.teamBName = teamAbbrs[1];
         }).catch(function (error) {
           console.log(error);
         });
@@ -71,7 +101,7 @@ var vm = new Vue({
     }
   },
   mounted: function mounted() {
-    var _this2 = this;
+    var _this3 = this;
 
     // const date = new Date();
     // date.setDate( date.getDate() - 1 );
@@ -98,8 +128,8 @@ var vm = new Vue({
     });
 
     this.$refs.vueInputSlider.noUiSlider.on('set', function (values) {
-      _this2.minuteStart = parseInt(values[0]);
-      _this2.minuteEnd = parseInt(values[1]);
+      _this3.minuteStart = parseInt(values[0]);
+      _this3.minuteEnd = parseInt(values[1]);
     });
   }
 });
