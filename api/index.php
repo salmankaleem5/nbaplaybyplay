@@ -1,5 +1,5 @@
 <?php
-header("Access-Control-Allow-Origin: *");	// Not safe for production, link stackoverflow here
+header("Access-Control-Allow-Origin: *");	// Not safe for production
 require 'lib/NBAClient.php';
 
 if( isset($_POST['action']) && $_POST['action'] == "getGames" ){
@@ -24,8 +24,9 @@ if( isset($_POST['action']) && $_POST['action'] == "getGames" ){
 		// curl request to get play by play for the provided game
 		$playsList = json_decode( file_get_contents("plays.json"), true );
 		// $playsList = NBAClient::getPlays($_POST['gameDate'], $_POST['gameID']);
-
-		echo json_encode( get_stats( $playsList, $_POST['startTime'], $_POST['endTime'] ) );
+		$plays = array();
+		$stats = get_stats( $playsList, $_POST['startTime'], $_POST['endTime'], $plays );
+		echo json_encode( [$stats, $plays] );
 		die();
 	}
 } else {
@@ -65,7 +66,7 @@ function parse_schedule( array $schedule ): array{
  * @param  String $endTime
  * @return Array
  */
-function get_stats( array $playsList, string $startTime, string $endTime ): array{
+function get_stats( array $playsList, string $startTime, string $endTime, array &$plays ): array{
 	$playsList = $playsList['sports_content']['game']['play'];
 
 	$range = getTimeRange( intval($startTime), intval($endTime) );
@@ -94,7 +95,7 @@ function get_stats( array $playsList, string $startTime, string $endTime ): arra
 		// Found play that corresponds to provided start time
 		if( $playTimestamp <= $range['start']['time'] ){
 			// collect first stat point here
-			collect_stats($play, $stats);
+			collect_stats($play, $stats, $plays);
 
 			break;
 		}
@@ -113,7 +114,7 @@ function get_stats( array $playsList, string $startTime, string $endTime ): arra
 		}
 
 		// collect stats here
-		collect_stats($play, $stats);
+		collect_stats($play, $stats, $plays);
 
 		$i++;
 	}
@@ -129,7 +130,7 @@ function get_stats( array $playsList, string $startTime, string $endTime ): arra
 		}
 
 		// collect stats here
-		collect_stats($play, $stats);
+		collect_stats($play, $stats, $plays);
 
 		$i++;
 	}
@@ -142,7 +143,7 @@ function get_stats( array $playsList, string $startTime, string $endTime ): arra
  * @param  Array $stats (by reference)
  * @return none
  */
-function collect_stats( array $play, array &$stats ){
+function collect_stats( array $play, array &$stats, array &$plays ){
 	$categories = array(
 		'FGM' => 0, 'FGA' => 0, 'PTS' => 0, 'REB' => 0, 'PF' => 0, 'FTM' => 0, 'FTA' => 0, '3PM' => 0, '3PA' => 0, '2PM' => 0, '2PA' => 0, 'TOV' => 0, 'SUB' => 0
 	);
@@ -153,6 +154,8 @@ function collect_stats( array $play, array &$stats ){
 	if( !isset($stats[$team]) ){
 		$stats[$team] = $categories;
 	}
+
+	$plays[] = $play["clock"].'-----'.$playDesc;
 
 	// Identify type of play and record statistic accorindgly
 	// Could make a more efficient algorithm (Work in progress)
@@ -187,13 +190,16 @@ function collect_stats( array $play, array &$stats ){
 		$stats[$team]["{$shotType}A"]++;
 	} else if( strpos($playDesc, 'Rebound') !== FALSE ){
 		$stats[$team]['REB']++;
+	} else if( strpos($playDesc, 'Turnover') !== FALSE ){
+		// Moved ahead of Foul because in cases of offensive fouls resulting in a turnover. Foul comes
+		// before turnover in the playlist (ex q3, 2:03 remaining). Turnover has the word foul in it
+		// so it causes the foul two be counted twice
+		$stats[$team]['TOV']++;
 	} else if( strpos($playDesc, 'Foul') !== FALSE ){
 		$stats[$team]['PF']++;
 		if( strpos($playDesc, 'Turnover') !== FALSE ){
 			$stats[$team]['TOV']++;
 		}
-	} else if( strpos($playDesc, 'Turnover') !== FALSE ){
-		$stats[$team]['TOV']++;
 	} else if( strpos($playDesc, 'Substitution') !== FALSE ){
 		$stats[$team]['SUB']++;
 	}

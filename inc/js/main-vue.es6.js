@@ -52,7 +52,8 @@ const vm = new Vue ({
     homeTeamName: undefined,
     awayTeamName: undefined,
     homeTeamStats: {},
-    awayTeamStats: {}
+    awayTeamStats: {},
+    playList: []
   },
   methods: {
     getGames: function(event){
@@ -94,12 +95,15 @@ const vm = new Vue ({
           responseType: 'json'
         })
         .then((response) => {
+          const stats = response.data[0];
           const homeTeamAbbr = this.gamesList[this.selectedGameIndex].homeTeam.abbreviation;
           const awayTeamAbbr = this.gamesList[this.selectedGameIndex].awayTeam.abbreviation;
           this.homeTeamName = homeTeamAbbr;
-          this.homeTeamStats = Object.assign({}, response.data[homeTeamAbbr]);
+          this.homeTeamStats = Object.assign({}, stats[homeTeamAbbr]);
           this.awayTeamName = awayTeamAbbr;
-          this.awayTeamStats = Object.assign({}, response.data[awayTeamAbbr]);
+          this.awayTeamStats = Object.assign({}, stats[awayTeamAbbr]);
+
+          this.playList = response.data[1];
         })
         .catch(function(error){
           console.log( error );
