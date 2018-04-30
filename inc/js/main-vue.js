@@ -12,9 +12,9 @@ var apiModule = function () {
 }();
 
 // https://vuejs.org/v2/guide/components.html#Using-v-model-on-Components
-var gameItemTemplate = '\n  <div class="form-check">\n    <label class="form-check-label">\n      <input type="radio" name="game" :value="game.gameID" class="form-check-input" v-on:input="$emit(\'input\', $event.target.value)">\n      <span>{{ game.homeTeam.teamName }} vs {{game.awayTeam.teamName }}</span>\n    </label>\n  </div>\n';
+var gameItemTemplate = '\n  <div class="form-check">\n    <label class="form-check-label">\n      <input type="radio" name="game" :value="index" class="form-check-input" v-on:input="$emit(\'input\', $event.target.value)">\n      <span>{{ game.homeTeam.teamName }} vs {{game.awayTeam.teamName }}</span>\n    </label>\n  </div>\n';
 Vue.component('game-item', {
-  props: ['game'],
+  props: ['game', 'index'],
   template: gameItemTemplate
 });
 
@@ -35,12 +35,12 @@ var vm = new Vue({
     minuteStart: 0,
     minuteEnd: 48,
     currentDate: undefined,
-    gamesList: [],
-    selectedGameID: undefined,
-    teamA: {},
-    teamAName: undefined,
-    teamB: {},
-    teamBName: undefined
+    gamesList: {},
+    selectedGameIndex: undefined,
+    homeTeamName: undefined,
+    awayTeamName: undefined,
+    homeTeamStats: {},
+    awayTeamStats: {}
   },
   methods: {
     getGames: function getGames(event) {
@@ -58,6 +58,7 @@ var vm = new Vue({
           responseType: 'json'
         }).then(function (response) {
           if (response.data.length > 0) {
+            _this.selectedGameIndex = undefined;
             _this.gamesList = response.data;
           }
         }).catch(function (error) {
@@ -68,7 +69,7 @@ var vm = new Vue({
     getData: function getData(event) {
       var _this2 = this;
 
-      if (this.selectedGameID !== undefined && this.currentDate !== undefined && this.minuteRange.length === 2) {
+      if (this.selectedGameIndex !== undefined && this.currentDate !== undefined && this.minuteRange.length === 2) {
         var formData = new FormData();
         formData.set('action', "getStats");
         formData.set('gameID', this.selectedGameID);
@@ -82,13 +83,12 @@ var vm = new Vue({
           data: formData,
           responseType: 'json'
         }).then(function (response) {
-          console.log(response);
-          var teamAbbrs = Object.keys(response.data);
-          _this2.teamA = Object.assign({}, _this2.teamA, response.data[teamAbbrs[0]]);
-          _this2.teamAName = teamAbbrs[0];
-
-          _this2.teamB = Object.assign({}, _this2.teamB, response.data[teamAbbrs[1]]);
-          _this2.teamBName = teamAbbrs[1];
+          var homeTeamAbbr = _this2.gamesList[_this2.selectedGameIndex].homeTeam.abbreviation;
+          var awayTeamAbbr = _this2.gamesList[_this2.selectedGameIndex].awayTeam.abbreviation;
+          _this2.homeTeamName = homeTeamAbbr;
+          _this2.homeTeamStats = Object.assign({}, response.data[homeTeamAbbr]);
+          _this2.awayTeamName = awayTeamAbbr;
+          _this2.awayTeamStats = Object.assign({}, response.data[awayTeamAbbr]);
         }).catch(function (error) {
           console.log(error);
         });
@@ -98,6 +98,12 @@ var vm = new Vue({
   computed: {
     minuteRange: function minuteRange() {
       return [this.minuteStart, this.minuteEnd];
+    },
+    selectedGameID: function selectedGameID() {
+      if (this.selectedGameIndex === undefined) {
+        return undefined;
+      }
+      return this.gamesList[this.selectedGameIndex]['gameID'];
     }
   },
   mounted: function mounted() {
