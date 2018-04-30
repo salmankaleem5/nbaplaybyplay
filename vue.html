@@ -34,8 +34,16 @@
 			<div id="games-list" class="">
 				<game-item v-for="(gameObject, index) in gamesList" :key="index" :index="index" :game="gameObject" v-on:input="selectedGameIndex = $event"></game-item>
 			</div>
-			<p class="text-center">Minutes</p>
+
+			<p class="text-center">Time Range (in minutes)</p>
 			<div id="input-slider" ref="vueInputSlider" class="clearfix"></div>
+			<div class="btn-group" role="group" aria-label="Basic example">
+			  <button type="button" class="btn btn-secondary slider-quick-set" data-quarter="first" v-on:click.prevent="quickSetSlider">First Quarter</button>
+			  <button type="button" class="btn btn-secondary slider-quick-set" data-quarter="second" v-on:click.prevent="quickSetSlider">Second Quarter</button>
+			  <button type="button" class="btn btn-secondary slider-quick-set" data-quarter="third" v-on:click.prevent="quickSetSlider">Third Quarter</button>
+			  <button type="button" class="btn btn-secondary slider-quick-set" data-quarter="fourth" v-on:click.prevent="quickSetSlider">Fourth Quarter</button>
+			  <button type="button" class="btn btn-secondary slider-quick-set" data-quarter="all" v-on:click.prevent="quickSetSlider">Whole Game</button>
+			</div>
 		</form>
 
 		<button id="get-data-button" type="button" class="btn btn-primary" v-on:click.prevent="getData" :disabled="selectedGameIndex === undefined">Get data</button>

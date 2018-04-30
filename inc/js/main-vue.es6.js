@@ -103,11 +103,30 @@ const vm = new Vue ({
           this.awayTeamName = awayTeamAbbr;
           this.awayTeamStats = Object.assign({}, stats[awayTeamAbbr]);
 
-          this.playList = response.data[1];
+          this.playList = [...response.data[1]];
         })
         .catch(function(error){
           console.log( error );
         });
+      }
+    },
+    quickSetSlider: function(event){
+      switch( event.target.dataset.quarter ){
+        case 'first':
+          this.$refs.vueInputSlider.noUiSlider.set([0, 12]);
+          break;
+        case 'second':
+          this.$refs.vueInputSlider.noUiSlider.set([12, 24]);
+          break;
+        case 'third':
+          this.$refs.vueInputSlider.noUiSlider.set([24, 36]);
+          break;
+        case 'fourth':
+          this.$refs.vueInputSlider.noUiSlider.set([36, 48]);
+          break;
+        case 'all':
+          this.$refs.vueInputSlider.noUiSlider.set([0, 48]);
+          break;
       }
     }
   },

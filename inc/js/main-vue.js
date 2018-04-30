@@ -1,5 +1,7 @@
 'use strict';
 
+function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
+
 var apiModule = function () {
   var module = {};
   var url = "http://localhost:8888/api/index.php";
@@ -92,10 +94,29 @@ var vm = new Vue({
           _this2.awayTeamName = awayTeamAbbr;
           _this2.awayTeamStats = Object.assign({}, stats[awayTeamAbbr]);
 
-          _this2.playList = response.data[1];
+          _this2.playList = [].concat(_toConsumableArray(response.data[1]));
         }).catch(function (error) {
           console.log(error);
         });
+      }
+    },
+    quickSetSlider: function quickSetSlider(event) {
+      switch (event.target.dataset.quarter) {
+        case 'first':
+          this.$refs.vueInputSlider.noUiSlider.set([0, 12]);
+          break;
+        case 'second':
+          this.$refs.vueInputSlider.noUiSlider.set([12, 24]);
+          break;
+        case 'third':
+          this.$refs.vueInputSlider.noUiSlider.set([24, 36]);
+          break;
+        case 'fourth':
+          this.$refs.vueInputSlider.noUiSlider.set([36, 48]);
+          break;
+        case 'all':
+          this.$refs.vueInputSlider.noUiSlider.set([0, 48]);
+          break;
       }
     }
   },
