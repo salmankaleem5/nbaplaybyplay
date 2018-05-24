@@ -1,6 +1,6 @@
 const apiModule = (function(){
   let module = {};
-  const url = "http://localhost:8888/api/index.php";
+  const url = "http://nba.test/api/index.php";
 
   module.getUrl = () => {
     return url;
@@ -13,7 +13,7 @@ const apiModule = (function(){
 const gameItemTemplate = `
   <div class="form-check">
     <label class="form-check-label">
-      <input type="radio" name="game" :value="index" class="form-check-input" v-on:input="$emit('input', $event.target.value)">
+      <input type="radio" name="game" :value="index" class="form-check-input" v-on:input="$emit('input-game', $event.target.value)">
       <span>{{ game.homeTeam.teamName }} vs {{game.awayTeam.teamName }}</span>
     </label>
   </div>

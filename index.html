@@ -26,19 +26,29 @@
 		<form>
 			<div class="form-group">
 				<label for="game-date-input">Select a date</label>
-				<input id="game-date-input" min="2017-10-17" type="date" pattern="[0-9]{4}-[0-9]{2}-[0-9]{2}" required value="2017-10-17">
+				<input id="game-date-input" min="2017-10-17" type="date" pattern="[0-9]{4}-[0-9]{2}-[0-9]{2}" required v-model:value="currentDate">
 			</div>
-			<button id="get-games-button" type="button" class="btn btn-secondary">Get games</button>
+			<button id="get-games-button" type="button" class="btn btn-secondary" v-on:click.prevent="getGames">Get games</button>
 
 			<p><strong>List of Games</strong></p>
-			<div id="games-list" class="hidden"></div>
+			<div id="games-list" class="">
+				<game-item v-for="(gameObject, index) in gamesList" :key="index" :index="index" :game="gameObject" v-on:input-game="selectedGameIndex = $event"></game-item>
+			</div>
 
-			<p class="text-center">Minutes</p>
-			<div id="input-slider" class="clearfix"></div>
+			<p class="text-center">Time Range (in minutes)</p>
+			<div id="input-slider" ref="vueInputSlider" class="clearfix"></div>
+			<div class="btn-group" role="group" aria-label="Basic example">
+			  <button type="button" class="btn btn-secondary slider-quick-set" data-quarter="first" v-on:click.prevent="quickSetSlider">First Quarter</button>
+			  <button type="button" class="btn btn-secondary slider-quick-set" data-quarter="second" v-on:click.prevent="quickSetSlider">Second Quarter</button>
+			  <button type="button" class="btn btn-secondary slider-quick-set" data-quarter="third" v-on:click.prevent="quickSetSlider">Third Quarter</button>
+			  <button type="button" class="btn btn-secondary slider-quick-set" data-quarter="fourth" v-on:click.prevent="quickSetSlider">Fourth Quarter</button>
+			  <button type="button" class="btn btn-secondary slider-quick-set" data-quarter="all" v-on:click.prevent="quickSetSlider">Whole Game</button>
+			</div>
 		</form>
-		<button id="get-data-button" type="button" class="btn btn-primary" disabled="true">Get data</button>
 
-		<table id="table-stats" class="table table-bordered table-hover hidden">
+		<button id="get-data-button" type="button" class="btn btn-primary" v-on:click.prevent="getData" :disabled="selectedGameIndex === undefined">Get data</button>
+
+		<table id="table-stats" class="table table-bordered table-hover" v-if="Object.keys(homeTeamStats).length && Object.keys(awayTeamStats).length">
 			<thead class="thead-light">
 				<tr>
 					<th>Team</th>
@@ -57,13 +67,17 @@
 					<th scope="col"><abbr title="Substitutions">SUBS</abbr></th>
 				</tr>
 			</thead>
-			<tbody></tbody>
+			<tbody>
+				<tr is="table-row" :row-data="homeTeamStats" :row-name="homeTeamName"></tr>
+				<tr is="table-row" :row-data="awayTeamStats" :row-name="awayTeamName"></tr>
+			</tbody>
 		</table>
 	</div>
 	<!-- Scripts  -->
-	<script src="inc/lib/js/jquery-3.2.1.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+	<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 	<script src="inc/lib/js/nouislider.min.js"></script>
 
-	<script src="inc/dist/js/script.js"></script>
+	<script src="inc/dist/js/script-vue.js"></script>
 </body>
 </html>

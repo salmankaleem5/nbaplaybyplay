@@ -4,7 +4,7 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
 
 var apiModule = function () {
   var module = {};
-  var url = "http://localhost:8888/api/index.php";
+  var url = "http://nba.test/api/index.php";
 
   module.getUrl = function () {
     return url;
@@ -14,7 +14,7 @@ var apiModule = function () {
 }();
 
 // https://vuejs.org/v2/guide/components.html#Using-v-model-on-Components
-var gameItemTemplate = '\n  <div class="form-check">\n    <label class="form-check-label">\n      <input type="radio" name="game" :value="index" class="form-check-input" v-on:input="$emit(\'input\', $event.target.value)">\n      <span>{{ game.homeTeam.teamName }} vs {{game.awayTeam.teamName }}</span>\n    </label>\n  </div>\n';
+var gameItemTemplate = '\n  <div class="form-check">\n    <label class="form-check-label">\n      <input type="radio" name="game" :value="index" class="form-check-input" v-on:input="$emit(\'input-game\', $event.target.value)">\n      <span>{{ game.homeTeam.teamName }} vs {{game.awayTeam.teamName }}</span>\n    </label>\n  </div>\n';
 Vue.component('game-item', {
   props: ['game', 'index'],
   template: gameItemTemplate
